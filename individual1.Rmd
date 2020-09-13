@@ -1,0 +1,76 @@
+---
+title: "DS202 Lab 2: individual1"
+author: "Jonathan DeGardner"
+date: "9/10/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r}
+choco <- read.csv("https://raw.githubusercontent.com/xdaiISU/ds202materials/master/hwlabs/data/choco.csv") 
+#str(choco)
+```
+
+
+
+## Searching for Best Chocolates
+**1.**
+```{r}
+hist(choco$Rating, main='Distribution of Ratings: Histogram', xlab='Rating', col='darkmagenta')
+
+boxplot(choco$Rating, main='Distribution of Ratings: Boxplot', xlab='Ratings', col='red')
+```
+
+The histogram is left skewed and bimodal, with potentially some outliers closer to the lower rating side.
+
+The boxplot is also left skewed and has 4 outliers on the lower end of the ratings (below 2.25 rating).
+
+
+**2.**
+```{r}
+date <- table(choco$Date)
+REF <- table(choco$REF)
+barplot(date, REF, xlab='Year', ylab='Number of Ratings', col='green')
+```
+
+
+**3.**
+```{r}
+c_percent <- table(choco$Cocoa_Percent)
+rate <- table(choco$Rating)
+plot(choco$Cocoa_Percent, choco$Rating, xlab='Cocoa Percent', ylab='Rating')
+cor(choco$Cocoa_Percent, choco$Rating)
+```
+
+Based on the scatterplot and correlation coefficient of cocoa percentage and rating, rating does not depend on cocoa percentage. The correlation between the two is -.15 which is a weak negative relationship, and one can see the weak relationship in the scatterplot.
+
+
+**4.**
+```{r}
+table(choco$Characteristics1, choco$Rating >= 3)
+boxplot(Rating~Characteristics2, data=choco, las=2)
+```
+
+According to the boxplot and rankings that are greater than 3, people tend to like fruity flavors such as banana and strawberry, but also enjoy other characteristics such as (but not limited to): coarse, cocoa, complex, creamy, dry, earthy, fatty, floral, grassy, gritty, intense, mild bitter, molasses, muted, nutty, oily, rich, roasty, rustic, sandy, smokey, smooth, spicy, sticky, sweet, tart, vanilla, and woody.
+
+
+**5.**
+
+1. One analysis I would like to perform is rating based on cocoa percentage. I will compare ratings with cocoa percentages to see if there is an ideal cocoa percentage in chocolate.
+```{r}
+boxplot(Rating~choco$Cocoa_Percent, data=choco, las=2, col='red')
+plot(choco$Cocoa_Percent, choco$Rating, xlab='Cocoa Percent', ylab='Rating')
+cor(choco$Cocoa_Percent, choco$Rating)
+```
+Based on the medians of the boxplot above, the ideal cocoa percentage is 63%, as it is the median with the highest rating. Although this boxplot is helpful in visualizing the ratings based on cocoa percentage, the scatterplot and correlation coefficient show that these two variables are weakly related, meaning that rating does not depend on cocoa percentage and that there are likely more factors influencing the these ratings.
+
+
+2. Another analysis I would like to perform is rating based on bean origin. I will be looking at ratings with the bean's origin to see which countries produce the best beans.
+```{r}
+rate_BO <- boxplot(Rating~Bean_Origin, data=choco, las=2)
+table(choco$Bean_Origin, choco$Rating >= 3, exclude=NULL)
+```
+
+My results are based on having a chocolate rating that is greater than or equal to 3. Additionally, I will only be mentioning bean origins that have 3 times as many, or more, TRUE values (rating of 3 or higher) than FALSE values (rating below 3). The best beans based on these are from: Belize, Bolivia, Brazil, Cameroon, Columbia, Congo, Costa Rica, Cuba, Dominican Republic, Guatemala, Haiti, India, Jamaica, Madagascar, Nicaragua, Panama, Papua New Guinea, Soloman Islands, Tanzania, Thailand, Trinidad, USA, Venezuela, and Vietnam.
