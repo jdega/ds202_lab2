@@ -1,0 +1,24 @@
+---
+title: "Lab 2 Team Document"
+author: "Jonathan DeGardner & _____"
+date: "9/13/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+choco <- read.csv("https://raw.githubusercontent.com/xdaiISU/ds202materials/master/hwlabs/data/choco.csv")
+```
+
+## Rating based on Bean Origin
+The first set of variables we will be looking at are rating and bean origin. We would like to know if the origin of a bean causes it to have a higher rating. Simply put, we would like to know where the best rated cocoa beans are grown according to our data.
+```{r}
+boxplot(Rating~Bean_Origin, data=choco, las=2, col='purple')
+table(choco$Bean_Origin, choco$Rating >= 3, exclude=NULL)
+```
+
+These results are based on having a chocolate rating that is greater than or equal to 3. Additionally, we will only be mentioning bean origins that have 3 times as many, or more, TRUE values (rating of 3 or higher) than FALSE values (rating below 3). The best beans based on these are from: Belize, Bolivia, Brazil, Cameroon, Columbia, Congo, Costa Rica, Cuba, Dominican Republic, Guatemala, Haiti, India, Jamaica, Madagascar, Nicaragua, Panama, Papua New Guinea, Soloman Islands, Tanzania, Thailand, Trinidad, USA, Venezuela, and Vietnam.
+
+
+## Rating based on Ingredients
