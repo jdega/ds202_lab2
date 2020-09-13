@@ -1,0 +1,190 @@
+---
+title: "Lab 2"
+author: "Malik Bulur"
+date: "9/10/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(ggplot2)
+choco <- read.csv("https://raw.githubusercontent.com/xdaiISU/ds202materials/master/hwlabs/data/choco.csv") 
+str(choco) 
+```          
+
+#### 1. How are the ratings distributed?
+The histogram shows that the ratings are skewed towards the left. This means that as the rating's value increases so does the frequency of the ratings. As the rating's value decreases then the frequency goes down also. Around the 2.50 rating value is when the frequency has major upward movement in the frequency versus its predecessors' ratings which seem to oscillate between 0 and 40 in frequency. When looking at the boxplot for the distribution of the ratings it can be seen that the average rating is at 3.25, the 25th percentile is 3.00, the 75th percentile is at 3.50, the lowest rating is 1.00, and the highest rating is 4.00.
+```{r}
+hist(choco$Rating, main="Frequency of Chocolate Ratings", xlab="Ratings", xlim=c(1, max(choco$Rating)), xaxp=c(1, max(choco$Rating), 12), ylim=c(0, 500), yaxp=c(0, 500, 10), col=rainbow(12), las=1)
+abline(h=seq(0, 500, 50), col="grey", lty="dotted")
+
+boxplot(choco$Rating, horizontal=TRUE, main="Distribution of Chocolate Ratings", xlab="Ratings", xaxp=c(1, max(choco$Rating), 12), col="brown", border="black")
+abline(v=seq(1, max(choco$Rating), 0.25), col=alpha("grey", 0.4), lty="dotted")
+```          
+
+#### 2. How does the number of ratings depend on the year?
+From 2006 to 2015 it can be seen there is a general upwards movement in the number of ratings as the years progress. But from 2015 and onward there is no real correlation that can be seen since the movement downward is not a solid linear decline and some oscillation can be seen between the years. This is especially true because the year 2020 isn't completed yet and there could be more ratings coming in as 2020 progresses. Although no real strong correlation can be made out after 2015 it can still be seen that the number of ratings for chocolate is on the decline as of 2020. So the number of ratings can depend on the year is true from 2006 to 2015 but from 2015 onward there needs to be some more data to formulate a definite answer.
+```{r}
+df_chocoYearAndRating <- aggregate(Rating ~ Date, data=choco, FUN=length)
+barplot(df_chocoYearAndRating$Rating, names.arg=df_chocoYearAndRating$Date, ylim=c(0, 300), yaxp=c(0, 300, 12), main="Number of Chocolate Ratings Per Year", xlab="Year", ylab="Number of Ratings", col=rainbow(15), las=2)
+abline(h=seq(0, 300, 25), col="grey", lty="dotted")
+```
+
+#### 3. Do ratings depend on the cacao percentage of a chocolate bar?
+No, because the correlation between cacao percentage and the chocolate rating is -0.1784699. Since -0.1784699 is closer to 0 than -0.8 then there is no real negative linear relationship between cacao percentage and chocolate rating. If the correlation was closer to -0.8 then it can be said even though its not completely definite that there is some sort of negative linear relationship between cacao percentage and the chocolate rating. Also, visually through the bar chart it can be seen that the average ratings just randomly oscillates between 2.00 and 3.75 regardless of increasing cacao percentage.
+```{r}
+df_chocoPercentRatingMean <- aggregate(Rating ~ Cocoa_Percent, data=choco, FUN=mean)
+cor(x=df_chocoPercentRatingMean$Cocoa_Percent, y=df_chocoPercentRatingMean$Rating)
+barplot(df_chocoPercentRatingMean$Rating, names.arg=df_chocoPercentRatingMean$Cocoa_Percent, ylim=c(0, 4), yaxp=c(0, 4, 16), main="Average of Chocolate Ratings Per Cocoa Percent", xlab="Cocoa Percent", ylab="Rating Average", cex.names=0.75, col=rainbow(15), las=2)
+abline(h=seq(0, 4, 0.25), col="grey", lty="dotted")
+```
+
+#### 4. How do different characteristics of the chocolate compare? To elaborate, which characteristics tend to be more favorable and which ones are not?
+From a surface view looking at the characteristics that make up the chocolate it can be seen that characteristic 1 and 2 are tied in most favorable due to having a higher 25th percentile chocolate rating of 3.0 then next most favorable characteristic 3 with a 2.967 rating. Characteristics 1, 2, 3 all have the same average chocolate rating of 3.25 and the same 75th percentile chocolate rating of 3.5. Characteristic 4 can be seen being the least favorable because it has the lowest average rating at 3.158. Other notable things to note about the characteristics is all 4 characteristics have a maximum chocolate rating of 4.0. Characteristics 1 and 2 both have the same minimum chocolate rating of 1.0 which are the lowest minimum of the 4 characteristics when including outliers.
+
+Diving deeper into each characteristics we can see what attributes make the individual characteristics more or less favorable. For characteristic 1 it can be seen that cardamon, chocolate covered banana, distinct lemon, large nibs, ligt color, mild tart, pronounced berry, simple red berry, smoth, sweet spice, and well defined are the most favorable attributes with a chocolate rating of 4.0. The least favorable attributes for characteristic 1 are this is not chocolate with a chocolate rating of 1.0 and klingy, high intensity bitter, and chemical each with a chocolate rating of 1.5.  
+
+For characteristic 2 it can be seen that burnt brownie, cinnamon, delicate cocoa, dense, distinquished, homey, intense pepper, long, raspberries, roasted cocoa, rounded, tart citrus, unripened fruit, wild berries, and yogurt are the most favorable attributes with a chocolate rating of 4.0. The least favorable attributes for characteristic 2 are strong off flavor with a chocolate rating of 1.0 and hint of fruit and strong chemical each with a chocolate rating of 1.5. 
+
+For characteristic 3 it can be seen that blackberry, clove, delicate fruit, gentle roast, and tangerine are the most favorable attributes with a chocolate rating of 4.0. The least favorable attributes for characteristic 3 are very bitter with a chocolate rating of 1.375 and wtf and unpleasant each with a chocolate rating of 1.5. 
+
+For characteristic 4 it can be seen that bread, cheese, olive, raspberry are the most favorable attributes with a chocolate rating of 4.0. The least favorable attributes for characteristic 4 are lemon with a chocolate rating of 2.0 and vegetal and dry each with a chocolate rating of 2.25.
+
+##### (1) General overview of the chocolate characteristics and their ratings distribution.
+```{r}
+df_characteristic1Rating <- aggregate(Rating ~ Characteristics1, data=choco, FUN=mean)
+df_characteristic2Rating <- aggregate(Rating ~ Characteristics2, data=choco, FUN=mean)
+df_characteristic3Rating <- aggregate(Rating ~ Characteristics3, data=choco, FUN=mean)
+df_characteristic4Rating <- aggregate(Rating ~ Characteristics4, data=choco, FUN=mean)
+
+df_characteristic1Rating <- df_characteristic1Rating[order(-df_characteristic1Rating$Rating),]
+df_characteristic2Rating <- df_characteristic2Rating[order(-df_characteristic2Rating$Rating),]
+df_characteristic3Rating <- df_characteristic3Rating[order(-df_characteristic3Rating$Rating),]
+df_characteristic4Rating <- df_characteristic4Rating[order(-df_characteristic4Rating$Rating),]
+
+top <- 20
+df_topCharacteristic1Rating <- head(df_characteristic1Rating, top)
+df_topCharacteristic2Rating <- head(df_characteristic2Rating, top)
+df_topCharacteristic3Rating <- head(df_characteristic3Rating, top)
+df_topCharacteristic4Rating <- head(df_characteristic4Rating, top)
+
+worst <- 20
+df_worstCharacteristic1Rating <- tail(df_characteristic1Rating, worst)
+df_worstCharacteristic2Rating <- tail(df_characteristic2Rating, worst)
+df_worstCharacteristic3Rating <- tail(df_characteristic3Rating, worst)
+df_worstCharacteristic4Rating <- tail(df_characteristic4Rating, worst)
+
+summary(df_characteristic1Rating)
+summary(df_characteristic2Rating)
+summary(df_characteristic3Rating)
+summary(df_characteristic4Rating)
+
+boxplot(df_characteristic1Rating$Rating, df_characteristic2Rating$Rating, df_characteristic3Rating$Rating, df_characteristic4Rating$Rating, main="Distribution of Ratings Per Characteristic", names=c("Characteristic 1", "Characteristic 2", "Characteristic 3", "Characteristic 4"), ylab="Rating", ylim=c(0,4), yaxp=c(0, 4, 16), col=c("red", "green", "blue", "orange"), las=1)
+abline(h=seq(0, 4, 0.25), col=alpha("grey", 0.4), lty="dotted")
+```
+
+##### (2) Top and worst 20 characteristic 1 attributes.
+```{r}
+df_topCharacteristic1Rating
+df_worstCharacteristic1Rating
+
+par(mfrow=c(1, 2))
+
+barplot(df_topCharacteristic1Rating$Rating, names.arg=substr(df_topCharacteristic1Rating$Characteristics1, 1, 12), horiz=TRUE,  main=paste("Top", toString(top), "Chocolate Characteristic 1 Based On Rating Average"),  xlab="Rating Average", xlim=c(0,4), xaxp=c(0, 4, 16), col=rainbow(top), cex.main=0.6, cex.names=0.6, cex.lab=0.6, cex.axis=0.6, las=1)
+abline(v=seq(0, 4, 0.25), col="grey", lty="dotted")
+barplot(df_worstCharacteristic1Rating$Rating, names.arg=substr(df_worstCharacteristic1Rating$Characteristics1, 1, 12), horiz=TRUE,  main=paste("Worst", toString(worst), "Chocolate Characteristic 1 Based On Rating Average"),  xlab="Rating Average", xlim=c(0,2.5), xaxp=c(0, 2.5, 10), col=rainbow(worst), cex.main=0.6, cex.names=0.6, cex.lab=0.6, cex.axis=0.6, las=1)
+abline(v=seq(0, 2.5, 0.25), col="grey", lty="dotted")
+```
+
+##### (3) Top and worst 20 characteristic 2 attributes.
+```{r}
+df_topCharacteristic2Rating
+df_worstCharacteristic2Rating
+
+par(mfrow=c(1, 2))
+
+barplot(df_topCharacteristic2Rating$Rating, names.arg=substr(df_topCharacteristic2Rating$Characteristics2, 1, 12), horiz=TRUE,  main=paste("Top", toString(top), "Chocolate Characteristic 2 Based On Rating Average"),  xlab="Rating Average", xlim=c(0,4), xaxp=c(0, 4, 16), col=rainbow(top), cex.main=0.6, cex.names=0.6, cex.lab=0.6, cex.axis=0.6, las=1)
+abline(v=seq(0, 4, 0.25), col="grey", lty="dotted")
+barplot(df_worstCharacteristic2Rating$Rating, names.arg=substr(df_worstCharacteristic2Rating$Characteristics2, 1, 12), horiz=TRUE,  main=paste("Worst", toString(worst), "Chocolate Characteristic 2 Based On Rating Average"),  xlab="Rating Average", xlim=c(0,2.5), xaxp=c(0, 2.5, 10), col=rainbow(worst), cex.main=0.6, cex.names=0.6, cex.lab=0.6, cex.axis=0.6, las=1)
+abline(v=seq(0, 2.5, 0.25), col="grey", lty="dotted")
+```
+
+##### (4) Top and worst 20 characteristic 3 attributes.
+```{r}
+df_topCharacteristic3Rating
+df_worstCharacteristic3Rating
+
+par(mfrow=c(1, 2))
+
+barplot(df_topCharacteristic3Rating$Rating, names.arg=substr(df_topCharacteristic3Rating$Characteristics3, 1, 12), horiz=TRUE,  main=paste("Top", toString(top), "Chocolate Characteristic 3 Based On Rating Average"),  xlab="Rating Average", xlim=c(0,4), xaxp=c(0, 4, 16), col=rainbow(top), cex.main=0.6, cex.names=0.6, cex.lab=0.6, cex.axis=0.6, las=1)
+abline(v=seq(0, 4, 0.25), col="grey", lty="dotted")
+barplot(df_worstCharacteristic3Rating$Rating, names.arg=substr(df_worstCharacteristic3Rating$Characteristics3, 1, 12), horiz=TRUE,  main=paste("Worst", toString(worst), "Chocolate Characteristic 3 Based On Rating Average"),  xlab="Rating Average", xlim=c(0,2.5), xaxp=c(0, 2.5, 10), col=rainbow(worst), cex.main=0.6, cex.names=0.6, cex.lab=0.6, cex.axis=0.6, las=1)
+abline(v=seq(0, 2.5, 0.25), col="grey", lty="dotted")
+```
+
+##### (5) Top and worst 20 characteristic 4 attributes.
+```{r}
+df_topCharacteristic4Rating
+df_worstCharacteristic4Rating
+
+par(mfrow=c(1, 2))
+
+barplot(df_topCharacteristic4Rating$Rating, names.arg=substr(df_topCharacteristic4Rating$Characteristics4, 1, 12), horiz=TRUE,  main=paste("Top", toString(top), "Chocolate Characteristic 4 Based On Rating Average"),  xlab="Rating Average", xlim=c(0,4), xaxp=c(0, 4, 16), col=rainbow(top), cex.main=0.6, cex.names=0.6, cex.lab=0.6, cex.axis=0.6, las=1)
+abline(v=seq(0, 4, 0.25), col="grey", lty="dotted")
+barplot(df_worstCharacteristic4Rating$Rating, names.arg=substr(df_worstCharacteristic4Rating$Characteristics4, 1, 12), horiz=TRUE,  main=paste("Worst", toString(worst), "Chocolate Characteristic 4 Based On Rating Average"),  xlab="Rating Average", xlim=c(0,2.75), xaxp=c(0, 2.75, 11), col=rainbow(worst), cex.main=0.6, cex.names=0.6, cex.lab=0.6, cex.axis=0.6, las=1)
+abline(v=seq(0, 2.75, 0.25), col="grey", lty="dotted")
+```
+
+#### 5. Brainstorm two analyses you would like to perform with your teammate. Describe in plain language what comparisons are you making. Create suitable numerical and graphical summaries for your analyses. Describe the results.
+The two analysis I would like to do with my teammate is to see which beans of origin contribute to higher and lower chocolate ratings and which ingredient combinations contribute to a higher and lower chocolate ratings. 
+
+After finding the average rating per bean origin it was found that beans from Tobago had the highest rated chocolate at 3.625 and beans from St.Vincent-Grenadines had the worst rated chocolates at 2.75. Some honorable mentions for best chocolate bean origin are Sao Tome & Principe with a 3.50 rating, Solomon Islands with a 3.45 rating, and Congo with a 3.318182 rating. Some honorable mentions for worst chocolate bean origin are Puerto Rico with a 2.75 rating, Principe with a 2.75 rating, and Martinique with a 2.75 rating.
+
+After finding the average rating per ingredient combination it was found that chocolates with the ingredients B, S, and C had the highest rated chocolates where the rating is 3.274859 and ingredients B, S\*, and Sa contained in the chocolate had the lowest rating of 2.50. Some honorable mentions for other top ingredient combinations include B and S with a 3.214218 rating; B, S, C, and L with a 3.198529 rating; and B, S, and V with a 3.166667. Some honorable mentions for worst ingredient combinations include B, S, C, V, and Sa with a rating of 2.791667; B, S, and L with a rating of 2.687500; and B, S\*, and Sa with a rating of 2.500000.
+
+##### (1) Analyzing chocolate bean origin and their corresponding ratings.
+```{r}
+df_beanOriginRating <- aggregate(Rating ~ Bean_Origin, data=choco, FUN=mean)
+
+df_beanOriginRating <- df_beanOriginRating[order(-df_beanOriginRating$Rating),]
+
+top <- 10
+worst <- 10 
+df_topBeanOriginRating <- head(df_beanOriginRating, top)
+df_worstBeanOriginRating <- tail(df_beanOriginRating, worst)
+
+df_topBeanOriginRating
+df_worstBeanOriginRating
+
+par(mfrow=c(1, 2))
+
+barplot(df_topBeanOriginRating$Rating, names.arg=substr(df_topBeanOriginRating$Bean_Origin, 1, 11), horiz=TRUE,  main=paste("Top", toString(top), "Chocolate Bean Origin Based On Rating Average"), xlab="Rating Average", xlim=c(0,4), xaxp=c(0, 4, 16), col=rainbow(top), cex.main=0.6, cex.names=0.6, cex.lab=0.6, cex.axis=0.6, las=1)
+abline(v=seq(0, 4, 0.25), col="grey", lty="dotted")
+barplot(df_worstBeanOriginRating$Rating, names.arg=substr(df_worstBeanOriginRating$Bean_Origin, 1, 11), horiz=TRUE,  main=paste("Worst", toString(worst), "Chocolate Bean Origin Based On Rating Average"), xlab="Rating Average", xlim=c(0,3), xaxp=c(0, 3, 12), col=rainbow(worst), cex.main=0.6, cex.names=0.6, cex.lab=0.6, cex.axis=0.6, las=1)
+abline(v=seq(0, 3, 0.25), col="grey", lty="dotted")
+```
+
+##### (2) Analyzing chocolate ingredients and their corresponding ratings.
+```{r}
+df_ingredientsRating <- aggregate(Rating ~ Ingredients, data=choco, FUN=mean)
+
+df_ingredientsRating <- df_ingredientsRating[order(-df_ingredientsRating$Rating),]
+
+top <- 10
+worst <- 10 
+df_topIngredientsRating <- head(df_ingredientsRating, top)
+df_worstIngredientsRating <- tail(df_ingredientsRating, worst)
+
+df_topIngredientsRating
+df_worstIngredientsRating
+
+par(mfrow=c(1, 2))
+
+barplot(df_topIngredientsRating$Rating, names.arg=substr(df_topIngredientsRating$Ingredients, 1, 11), horiz=TRUE,  main=paste("Top", toString(top), "Chocolate Ingredients Based On Rating Average"), xlab="Rating Average", xlim=c(0,4), xaxp=c(0, 4, 16), col=rainbow(top), cex.main=0.6, cex.names=0.6, cex.lab=0.6, cex.axis=0.6, las=1)
+abline(v=seq(0, 4, 0.25), col="grey", lty="dotted")
+barplot(df_worstIngredientsRating$Rating, names.arg=substr(df_worstIngredientsRating$Ingredients, 1, 11), horiz=TRUE,  main=paste("Worst", toString(worst), "Chocolate Ingredients Based On Rating Average"), xlab="Rating Average", xlim=c(0,3), xaxp=c(0, 3, 12), col=rainbow(worst), cex.main=0.6, cex.names=0.6, cex.lab=0.6, cex.axis=0.6, las=1)
+abline(v=seq(0, 3, 0.25), col="grey", lty="dotted")
+```
