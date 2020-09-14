@@ -183,8 +183,8 @@ df_worstIngredientsRating
 
 par(mfrow=c(1, 2))
 
-barplot(df_topIngredientsRating$Rating, names.arg=substr(df_topIngredientsRating$Ingredients, 1, 11), horiz=TRUE,  main=paste("Top", toString(top), "Chocolate Ingredients Based On Rating Average"), xlab="Rating Average", xlim=c(0,4), xaxp=c(0, 4, 16), col=rainbow(top), cex.main=0.6, cex.names=0.6, cex.lab=0.6, cex.axis=0.6, las=1)
+barplot(df_topIngredientsRating$Rating, names.arg=substr(df_topIngredientsRating$Ingredients, 3, 13), horiz=TRUE,  main=paste("Top", toString(top), "Chocolate Ingredients Based On Rating Average"), xlab="Rating Average", xlim=c(0,4), xaxp=c(0, 4, 16), col=rainbow(top), cex.main=0.6, cex.names=0.6, cex.lab=0.6, cex.axis=0.6, las=1)
 abline(v=seq(0, 4, 0.25), col="grey", lty="dotted")
-barplot(df_worstIngredientsRating$Rating, names.arg=substr(df_worstIngredientsRating$Ingredients, 1, 11), horiz=TRUE,  main=paste("Worst", toString(worst), "Chocolate Ingredients Based On Rating Average"), xlab="Rating Average", xlim=c(0,3), xaxp=c(0, 3, 12), col=rainbow(worst), cex.main=0.6, cex.names=0.6, cex.lab=0.6, cex.axis=0.6, las=1)
+barplot(df_worstIngredientsRating$Rating, names.arg=substr(df_worstIngredientsRating$Ingredients, 3, 13), horiz=TRUE,  main=paste("Worst", toString(worst), "Chocolate Ingredients Based On Rating Average"), xlab="Rating Average", xlim=c(0,3), xaxp=c(0, 3, 12), col=rainbow(worst), cex.main=0.6, cex.names=0.6, cex.lab=0.6, cex.axis=0.6, las=1)
 abline(v=seq(0, 3, 0.25), col="grey", lty="dotted")
 ```

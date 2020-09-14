@@ -1,6 +1,6 @@
 ---
 title: "Lab 2 Team Document"
-author: "Jonathan DeGardner & _____"
+author: "Jonathan DeGardner & Malik Bulur"
 date: "9/13/2020"
 output: html_document
 ---
@@ -11,14 +11,57 @@ knitr::opts_chunk$set(echo = TRUE)
 choco <- read.csv("https://raw.githubusercontent.com/xdaiISU/ds202materials/master/hwlabs/data/choco.csv")
 ```
 
-## Rating based on Bean Origin
-The first set of variables we will be looking at are rating and bean origin. We would like to know if the origin of a bean causes it to have a higher rating. Simply put, we would like to know where the best rated cocoa beans are grown according to our data.
+#### Analysis 1: Rating based on Bean Origin
+The first set of variables we will be looking at are rating and bean origin. We would like to know if the origin of a bean causes it to have a higher rating. Simply put, we would like to know where the best and worst rated cocoa beans are grown according to our data.
 ```{r}
-boxplot(Rating~Bean_Origin, data=choco, las=2, col='purple')
+library(ggplot2)
+
+df_beanOriginRating <- aggregate(Rating ~ Bean_Origin, data=choco, FUN=mean)
+
+df_beanOriginRating <- df_beanOriginRating[order(-df_beanOriginRating$Rating),]
+
+top <- 10
+worst <- 10 
+df_topBeanOriginRating <- head(df_beanOriginRating, top)
+df_worstBeanOriginRating <- tail(df_beanOriginRating, worst)
+
+df_topBeanOriginRating
+df_worstBeanOriginRating
+
+boxplot(Rating~Bean_Origin, data=choco, xlab="", main="Distribution of Chocolate Ratings Per Bean Origin", ylim=c(1,4), yaxp=c(1, 4, 12), las=2, col='purple')
+abline(h=seq(1, 4, 0.25), col=alpha("grey", 0.4), lty="dotted")
+
+par(mfrow=c(1, 2))
+
+barplot(df_topBeanOriginRating$Rating, names.arg=substr(df_topBeanOriginRating$Bean_Origin, 1, 11), horiz=TRUE,  main=paste("Top", toString(top), "Chocolate Bean Origin Based On Rating Average"), xlab="Rating Average", xlim=c(0,4), xaxp=c(0, 4, 16), col=rainbow(top), cex.main=0.6, cex.names=0.6, cex.lab=0.6, cex.axis=0.6, las=1)
+abline(v=seq(0, 4, 0.25), col="grey", lty="dotted")
+barplot(df_worstBeanOriginRating$Rating, names.arg=substr(df_worstBeanOriginRating$Bean_Origin, 1, 11), horiz=TRUE,  main=paste("Worst", toString(worst), "Chocolate Bean Origin Based On Rating Average"), xlab="Rating Average", xlim=c(0,3), xaxp=c(0, 3, 12), col=rainbow(worst), cex.main=0.6, cex.names=0.6, cex.lab=0.6, cex.axis=0.6, las=1)
+abline(v=seq(0, 3, 0.25), col="grey", lty="dotted")
+
 table(choco$Bean_Origin, choco$Rating >= 3, exclude=NULL)
 ```
 
-These results are based on having a chocolate rating that is greater than or equal to 3. Additionally, we will only be mentioning bean origins that have 3 times as many, or more, TRUE values (rating of 3 or higher) than FALSE values (rating below 3). The best beans based on these are from: Belize, Bolivia, Brazil, Cameroon, Columbia, Congo, Costa Rica, Cuba, Dominican Republic, Guatemala, Haiti, India, Jamaica, Madagascar, Nicaragua, Panama, Papua New Guinea, Soloman Islands, Tanzania, Thailand, Trinidad, USA, Venezuela, and Vietnam.
+These results are based on having a chocolate rating that is greater than or equal to 3. Additionally, we will only be mentioning bean origins that have 3 times as many, or more, TRUE values (rating of 3 or higher) than FALSE values (rating below 3). The best beans based on these are from: Belize, Bolivia, Brazil, Cameroon, Columbia, Congo, Costa Rica, Cuba, Dominican Republic, Guatemala, Haiti, India, Jamaica, Madagascar, Nicaragua, Panama, Papua New Guinea, Soloman Islands, Tanzania, Thailand, Trinidad, USA, Venezuela, and Vietnam. St.Vincent-Grenadines, Puerto Rico, Principe, Martinique, Ivory Coast, Sierra Leone, Uganda, Taiwan, Sri Lanka, and St. Lucia are the top 10 worst places to gets beans for chocolate based on the chocolate ratings.
 
+#### Analysis 2: Rating based on Ingredients
+For this analysis we wanted to see what combination of ingredients formed the best chocolate based on rating. After finding the average rating per ingredient combination it was found that chocolates with the ingredients B, S, and C had the highest rated chocolates where the rating is 3.274859 and ingredients B, S\*, and Sa contained in the chocolate had the lowest rating of 2.50. Some honorable mentions for other top ingredient combinations include B and S with a 3.214218 rating; B, S, C, and L with a 3.198529 rating; and B, S, and V with a 3.166667. Some honorable mentions for worst ingredient combinations include B, S, C, V, and Sa with a rating of 2.791667; B, S, and L with a rating of 2.687500; and B, S\*, and Sa with a rating of 2.500000.
+```{r}
+df_ingredientsRating <- aggregate(Rating ~ Ingredients, data=choco, FUN=mean)
 
-## Rating based on Ingredients
+df_ingredientsRating <- df_ingredientsRating[order(-df_ingredientsRating$Rating),]
+
+top <- 10
+worst <- 10 
+df_topIngredientsRating <- head(df_ingredientsRating, top)
+df_worstIngredientsRating <- tail(df_ingredientsRating, worst)
+
+df_topIngredientsRating
+df_worstIngredientsRating
+
+par(mfrow=c(1, 2))
+
+barplot(df_topIngredientsRating$Rating, names.arg=substr(df_topIngredientsRating$Ingredients, 3, 13), horiz=TRUE,  main=paste("Top", toString(top), "Chocolate Ingredients Based On Rating Average"), xlab="Rating Average", xlim=c(0,4), xaxp=c(0, 4, 16), col=rainbow(top), cex.main=0.6, cex.names=0.6, cex.lab=0.6, cex.axis=0.6, las=1)
+abline(v=seq(0, 4, 0.25), col="grey", lty="dotted")
+barplot(df_worstIngredientsRating$Rating, names.arg=substr(df_worstIngredientsRating$Ingredients, 3, 13), horiz=TRUE,  main=paste("Worst", toString(worst), "Chocolate Ingredients Based On Rating Average"), xlab="Rating Average", xlim=c(0,3), xaxp=c(0, 3, 12), col=rainbow(worst), cex.main=0.6, cex.names=0.6, cex.lab=0.6, cex.axis=0.6, las=1)
+abline(v=seq(0, 3, 0.25), col="grey", lty="dotted")
+```
